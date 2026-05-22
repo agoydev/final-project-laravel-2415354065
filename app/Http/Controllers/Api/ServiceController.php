@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 
 class ServiceController extends Controller
 {
-    // 1. GET ALL SERVICES (Bisa filter via query parameter ?status=active/inactive)
     public function index(Request $request): JsonResponse
     {
         $status = $request->query("status");
@@ -40,7 +39,6 @@ class ServiceController extends Controller
         ]);
     }
 
-    // 2. CREATE NEW SERVICE
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
@@ -60,7 +58,6 @@ class ServiceController extends Controller
         ], 201);
     }
 
-    // 3. SHOW SINGLE SERVICE BY ID
     public function show(int $service): JsonResponse
     {
         $service = Service::query()->find($service);
@@ -80,7 +77,6 @@ class ServiceController extends Controller
         ]);
     }
 
-    // 4. UPDATE SERVICE BY ID
     public function update(Request $request, int $service): JsonResponse
     {
         $service = Service::query()->find($service);
@@ -109,7 +105,6 @@ class ServiceController extends Controller
         ]);
     }
 
-    // 5. DELETE SERVICE (Akan gagal jika service memiliki data subscription)
     public function destroy(int $service): JsonResponse
     {
         $service = Service::query()->find($service);
@@ -139,7 +134,6 @@ class ServiceController extends Controller
         ]);
     }
 
-    // 6. PATCH ACTIVATE SERVICE
     public function activate(int $service): JsonResponse
     {
         $service = Service::query()->find($service);
@@ -161,7 +155,6 @@ class ServiceController extends Controller
         ]);
     }
 
-    // 7. PATCH DEACTIVATE SERVICE
     public function deactivate(int $service): JsonResponse
     {
         $service = Service::query()->find($service);
