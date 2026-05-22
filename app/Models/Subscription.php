@@ -26,17 +26,10 @@ class Subscription extends Model
         ];
     }
 
-    /**
-     * Relasi balik ke Customer
-     */
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
     }
-
-    /**
-     * Relasi balik ke Service
-     */
     public function service(): BelongsTo
     {
         return $this->belongsTo(Service::class);

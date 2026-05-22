@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 
 class ServiceController extends Controller
 {
-    // 1. GET ALL DATA
     public function index(): JsonResponse
     {
         $services = Service::query()->latest()->get();
@@ -22,8 +21,6 @@ class ServiceController extends Controller
             'data' => $services,
         ]);
     }
-
-    // 2. CREATE DATA
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
@@ -43,7 +40,6 @@ class ServiceController extends Controller
         ], 201);
     }
 
-    // 3. GET DATA BY ID
     public function show(int $service): JsonResponse
     {
         $service = Service::query()->find($service);
@@ -63,7 +59,6 @@ class ServiceController extends Controller
         ]);
     }
 
-    // 4. UPDATE DATA
     public function update(Request $request, int $service): JsonResponse
     {
         $service = Service::query()->find($service);
@@ -92,7 +87,6 @@ class ServiceController extends Controller
         ]);
     }
 
-    // 5. DELETE DATA
     public function destroy(int $service): JsonResponse
     {
         $service = Service::query()->find($service);
@@ -122,7 +116,6 @@ class ServiceController extends Controller
         ]);
     }
 
-    // 6. GET ALL DATA BY STATUS
     public function getByStatus(Request $request): JsonResponse
     {
         $status = $request->query('status');
@@ -149,7 +142,6 @@ class ServiceController extends Controller
         ]);
     }
 
-    // 7. CHANGE STATUS (Endpoint Tunggal Pembalik Status)
     public function changeStatus(int $service): JsonResponse
     {
         $service = Service::query()->find($service);

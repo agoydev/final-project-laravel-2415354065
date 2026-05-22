@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
-    // 1. GET ALL DATA
     public function index(): JsonResponse
     {
         $customers = Customer::query()->latest()->get();
@@ -22,8 +21,6 @@ class CustomerController extends Controller
             'data' => $customers,
         ]);
     }
-
-    // 2. CREATE DATA
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
@@ -45,7 +42,6 @@ class CustomerController extends Controller
         ], 201);
     }
 
-    // 3. GET DATA BY ID
     public function show(int $id): JsonResponse
     {
         $customer = Customer::query()->find($id);
@@ -64,7 +60,6 @@ class CustomerController extends Controller
         ]);
     }
 
-    // 4. UPDATE DATA (selain subscription)
     public function update(Request $request, int $id): JsonResponse
     {
         $customer = Customer::query()->find($id);
@@ -94,7 +89,6 @@ class CustomerController extends Controller
         ]);
     }
 
-    // 5. DELETE DATA (selain subscription)
     public function destroy(int $id): JsonResponse
     {
         $customer = Customer::query()->find($id);
@@ -122,7 +116,6 @@ class CustomerController extends Controller
         ]);
     }
 
-    // 6. GET ALL DATA BY STATUS
     public function getByStatus(Request $request): JsonResponse
     {
         $status = $request->query('status');
@@ -149,7 +142,6 @@ class CustomerController extends Controller
         ]);
     }
 
-    // 7. CHANGE STATUS
     public function changeStatus(int $id): JsonResponse
     {
         $customer = Customer::query()->find($id);

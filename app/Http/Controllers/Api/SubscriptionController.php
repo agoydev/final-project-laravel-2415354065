@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 
 class SubscriptionController extends Controller
 {
-    // 1. GET ALL DATA
     public function index(): JsonResponse
     {
         $subscriptions = Subscription::with(['customer', 'service'])->latest()->get();
@@ -23,7 +22,6 @@ class SubscriptionController extends Controller
         ]);
     }
 
-    // 2. CREATE DATA
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
@@ -44,7 +42,6 @@ class SubscriptionController extends Controller
         ], 201);
     }
 
-    // 3. GET DATA BY ID
     public function show(int $id): JsonResponse
     {
         $subscription = Subscription::with(['customer', 'service'])->find($id);
@@ -63,7 +60,6 @@ class SubscriptionController extends Controller
         ]);
     }
 
-    // 4. UPDATE DATA (Dilarang untuk subscription)
     public function update(Request $request, int $id): JsonResponse
     {
         return response()->json([
@@ -72,7 +68,6 @@ class SubscriptionController extends Controller
         ], 405);
     }
 
-    // 5. DELETE DATA (Dilarang untuk subscription)
     public function destroy(int $id): JsonResponse
     {
         return response()->json([
@@ -81,7 +76,6 @@ class SubscriptionController extends Controller
         ], 405);
     }
 
-    // 6. GET ALL DATA BY STATUS
     public function getByStatus(Request $request): JsonResponse
     {
         $status = $request->query('status');
@@ -108,7 +102,6 @@ class SubscriptionController extends Controller
         ]);
     }
 
-    // 7. CHANGE STATUS
     public function changeStatus(int $id): JsonResponse
     {
         $subscription = Subscription::query()->find($id);
