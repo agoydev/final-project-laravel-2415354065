@@ -12,18 +12,16 @@ use App\Http\Controllers\Api\SubscriptionController;
 */
 
 // 1. MODULE SERVICES
-// Otomatis mendaftarkan route index, store, show, update, destroy untuk services
+Route::get('services/filter/status', [ServiceController::class, 'getByStatus']);
+Route::patch('services/{service}/change-status', [ServiceController::class, 'changeStatus']);
 Route::apiResource("services", ServiceController::class);
-// Custom route untuk aktivasi dan deaktivasi status service
-Route::patch("services/{service}/activate", [ServiceController::class, "activate"]);
-Route::patch("services/{service}/deactivate", [ServiceController::class, "deactivate"]);
-
 
 // 2. MODULE CUSTOMERS
-// Otomatis mendaftarkan route index, store, show, update, destroy untuk customers
+Route::get('customers/filter/status', [CustomerController::class, 'getByStatus']);
+Route::patch('customers/{id}/change-status', [CustomerController::class, 'changeStatus']);
 Route::apiResource("customers", CustomerController::class);
 
-
 // 3. MODULE SUBSCRIPTIONS
-// Otomatis mendaftarkan route index, store, show, update, destroy untuk subscriptions
+Route::get('subscriptions/filter/status', [SubscriptionController::class, 'getByStatus']);
+Route::patch('subscriptions/{id}/change-status', [SubscriptionController::class, 'changeStatus']);
 Route::apiResource("subscriptions", SubscriptionController::class);

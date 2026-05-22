@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 
 class SubscriptionController extends Controller
 {
-    // 1. GET ALL SUBSCRIPTIONS (Eager loading relasi customer & service)
+    // 1. GET ALL DATA
     public function index(): JsonResponse
     {
         $subscriptions = Subscription::with(['customer', 'service'])->latest()->get();
@@ -23,7 +23,7 @@ class SubscriptionController extends Controller
         ]);
     }
 
-    // 2. CREATE NEW SUBSCRIPTION
+    // 2. CREATE DATA
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
@@ -44,7 +44,7 @@ class SubscriptionController extends Controller
         ], 201);
     }
 
-    // 3. SHOW SINGLE SUBSCRIPTION
+    // 3. GET DATA BY ID
     public function show(int $id): JsonResponse
     {
         $subscription = Subscription::with(['customer', 'service'])->find($id);
@@ -63,37 +63,53 @@ class SubscriptionController extends Controller
         ]);
     }
 
-    // 4. UPDATE SUBSCRIPTION
+    // 4. UPDATE DATA (Dilarang untuk subscription)
     public function update(Request $request, int $id): JsonResponse
     {
-        $subscription = Subscription::query()->find($id);
+        return response()->json([
+            'success' => false,
+            'message' => 'Update operation is not allowed for subscriptions.'
+        ], 405);
+    }
 
-        if (!$subscription) {
+    // 5. DELETE DATA (Dilarang untuk subscription)
+    public function destroy(int $id): JsonResponse
+    {
+        return response()->json([
+            'success' => false,
+            'message' => 'Delete operation is not allowed for subscriptions.'
+        ], 405);
+    }
+
+    // 6. GET ALL DATA BY STATUS
+    public function getByStatus(Request $request): JsonResponse
+    {
+        $status = $request->query('status');
+
+        if ($status === null || !in_array($status, ['active', 'inactive'], true)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Subscription not found',
-            ], 404);
+                'message' => 'Validation failed',
+                'errors' => [
+                    'status' => ['The status parameter is required and must be active or inactive.'],
+                ],
+            ], 422);
         }
 
-        $data = $request->validate([
-            'customer_id' => ['sometimes', 'exists:customers,id'],
-            'service_id' => ['sometimes', 'exists:services,id'],
-            'start_date' => ['sometimes', 'date'],
-            'end_date' => ['sometimes', 'date', 'after:start_date'],
-            'status' => ['nullable', 'boolean'],
-        ]);
-
-        $subscription->update($data);
+        $subscriptions = Subscription::with(['customer', 'service'])
+            ->where('status', $status === 'active')
+            ->latest()
+            ->get();
 
         return response()->json([
             'success' => true,
-            'message' => 'Subscription updated successfully',
-            'data' => $subscription->load(['customer', 'service']),
+            'message' => 'Subscriptions retrieved successfully by status',
+            'data' => $subscriptions,
         ]);
     }
 
-    // 5. DELETE SUBSCRIPTION
-    public function destroy(int $id): JsonResponse
+    // 7. CHANGE STATUS
+    public function changeStatus(int $id): JsonResponse
     {
         $subscription = Subscription::query()->find($id);
 
@@ -104,12 +120,14 @@ class SubscriptionController extends Controller
             ], 404);
         }
 
-        $subscription->delete();
+        $subscription->update([
+            'status' => !$subscription->status
+        ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Subscription deleted successfully',
-            'data' => null,
+            'message' => 'Subscription status updated successfully',
+            'data' => $subscription->load(['customer', 'service']),
         ]);
     }
 }

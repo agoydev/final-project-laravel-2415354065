@@ -11,34 +11,19 @@ use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
-    // 1. GET ALL CUSTOMERS (Bisa filter via query ?status=active/inactive)
-    public function index(Request $request): JsonResponse
+    // 1. GET ALL DATA
+    public function index(): JsonResponse
     {
-        $status = $request->query('status');
-        $query = Customer::query();
-
-        if ($status !== null) {
-            if (!in_array($status, ['active', 'inactive'], true)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation failed',
-                    'errors' => [
-                        'status' => ['The selected status is invalid.'],
-                    ],
-                ], 422);
-            }
-
-            $query->where('status', $status === 'active');
-        }
+        $customers = Customer::query()->latest()->get();
 
         return response()->json([
             'success' => true,
             'message' => 'Customers retrieved successfully',
-            'data' => $query->latest()->get(),
+            'data' => $customers,
         ]);
     }
 
-    // 2. CREATE NEW CUSTOMER
+    // 2. CREATE DATA
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
@@ -60,7 +45,7 @@ class CustomerController extends Controller
         ], 201);
     }
 
-    // 3. SHOW SINGLE CUSTOMER BY ID
+    // 3. GET DATA BY ID
     public function show(int $id): JsonResponse
     {
         $customer = Customer::query()->find($id);
@@ -79,7 +64,7 @@ class CustomerController extends Controller
         ]);
     }
 
-    // 4. UPDATE CUSTOMER BY ID
+    // 4. UPDATE DATA (selain subscription)
     public function update(Request $request, int $id): JsonResponse
     {
         $customer = Customer::query()->find($id);
@@ -109,7 +94,7 @@ class CustomerController extends Controller
         ]);
     }
 
-    // 5. DELETE CUSTOMER (Gagal jika punya relasi ke subscription)
+    // 5. DELETE DATA (selain subscription)
     public function destroy(int $id): JsonResponse
     {
         $customer = Customer::query()->find($id);
@@ -134,6 +119,56 @@ class CustomerController extends Controller
             'success' => true,
             'message' => 'Customer deleted successfully',
             'data' => null,
+        ]);
+    }
+
+    // 6. GET ALL DATA BY STATUS
+    public function getByStatus(Request $request): JsonResponse
+    {
+        $status = $request->query('status');
+
+        if ($status === null || !in_array($status, ['active', 'inactive'], true)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => [
+                    'status' => ['The status parameter is required and must be active or inactive.'],
+                ],
+            ], 422);
+        }
+
+        $customers = Customer::query()
+            ->where('status', $status === 'active')
+            ->latest()
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Customers retrieved successfully by status',
+            'data' => $customers,
+        ]);
+    }
+
+    // 7. CHANGE STATUS
+    public function changeStatus(int $id): JsonResponse
+    {
+        $customer = Customer::query()->find($id);
+
+        if (!$customer) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Customer not found',
+            ], 404);
+        }
+
+        $customer->update([
+            'status' => !$customer->status
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Customer status updated successfully',
+            'data' => $customer,
         ]);
     }
 }
