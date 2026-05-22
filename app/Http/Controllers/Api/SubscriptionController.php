@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 
 class SubscriptionController extends Controller
 {
-    // 1. GET ALL SUBSCRIPTIONS (Eager loading relasi customer & service)
+
     public function index(): JsonResponse
     {
         $subscriptions = Subscription::with(['customer', 'service'])->latest()->get();
@@ -23,7 +23,6 @@ class SubscriptionController extends Controller
         ]);
     }
 
-    // 2. CREATE NEW SUBSCRIPTION
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
@@ -44,7 +43,6 @@ class SubscriptionController extends Controller
         ], 201);
     }
 
-    // 3. SHOW SINGLE SUBSCRIPTION
     public function show(int $id): JsonResponse
     {
         $subscription = Subscription::with(['customer', 'service'])->find($id);
@@ -63,7 +61,6 @@ class SubscriptionController extends Controller
         ]);
     }
 
-    // 4. UPDATE SUBSCRIPTION
     public function update(Request $request, int $id): JsonResponse
     {
         $subscription = Subscription::query()->find($id);
@@ -92,7 +89,6 @@ class SubscriptionController extends Controller
         ]);
     }
 
-    // 5. DELETE SUBSCRIPTION
     public function destroy(int $id): JsonResponse
     {
         $subscription = Subscription::query()->find($id);
