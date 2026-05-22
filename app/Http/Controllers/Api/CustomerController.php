@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
-    // 1. GET ALL CUSTOMERS (Bisa filter via query ?status=active/inactive)
     public function index(Request $request): JsonResponse
     {
         $status = $request->query('status');
@@ -38,7 +37,6 @@ class CustomerController extends Controller
         ]);
     }
 
-    // 2. CREATE NEW CUSTOMER
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
@@ -60,7 +58,6 @@ class CustomerController extends Controller
         ], 201);
     }
 
-    // 3. SHOW SINGLE CUSTOMER BY ID
     public function show(int $id): JsonResponse
     {
         $customer = Customer::query()->find($id);
@@ -109,7 +106,6 @@ class CustomerController extends Controller
         ]);
     }
 
-    // 5. DELETE CUSTOMER (Gagal jika punya relasi ke subscription)
     public function destroy(int $id): JsonResponse
     {
         $customer = Customer::query()->find($id);
